@@ -9,11 +9,18 @@ class JWTBearer(HTTPBearer):
         super(JWTBearer, self).__init__(auto_error=auto_error)
 
     async def __call__(self, request: Request):
-        credentials: HTTPAuthorizationCredentials = await super(JWTBearer, self).__call__(request)
+        credentials: HTTPAuthorizationCredentials = await super(
+            JWTBearer, self
+        ).__call__(request)
         if credentials:
             error, payload = verify_jwt(credentials.credentials)
             if error:
-                raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"Invalid token: {error}")
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail=f"Invalid token: {error}",
+                )
             return payload
         else:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid token")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN, detail="Invalid token"
+            )

@@ -18,7 +18,7 @@ with urllib.request.urlopen(jwks_url) as url:
 
 # Arrange the keys in a dict keyed on the 'kid' for convenient lookup
 keys: list = jwks["keys"]
-kid_dict = dict((k['kid'], k) for k in keys)
+kid_dict = dict((k["kid"], k) for k in keys)
 
 
 def verify_jwt(jwtoken: str) -> tuple[Optional[Exception], Optional[dict]]:
@@ -28,9 +28,9 @@ def verify_jwt(jwtoken: str) -> tuple[Optional[Exception], Optional[dict]]:
     :return: An error if any and the contents of the token if valid
     """
     try:
-        kid: str = jwt.get_unverified_header(jwtoken)['kid']
+        kid: str = jwt.get_unverified_header(jwtoken)["kid"]
         rsa_key = kid_dict[kid] or {}
-        payload = jwt.decode(jwtoken, rsa_key, algorithms=['RS256'], audience=audience)
+        payload = jwt.decode(jwtoken, rsa_key, algorithms=["RS256"], audience=audience)
         error = None
     except (JWTError, JWTClaimsError) as jwt_error:
         payload = None
