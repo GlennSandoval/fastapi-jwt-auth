@@ -1,16 +1,20 @@
+"""
+Provide a method to verify a jwt against the audience and public keys specified in the config.
+"""
+
 import json
 import urllib.request
 from typing import Optional
 
-from jose import jwt, JWTError
-from jose.exceptions import JWTClaimsError
+from jose import jwt, JWTError  # type: ignore
+from jose.exceptions import JWTClaimsError  # type: ignore
 
 from config import settings
 
-auth_settings = settings.get("auth")
+auth_settings: dict[str, str] = settings.get("auth") or {}
 
-jwks_url = auth_settings.get("jwks_url")
-audience = auth_settings.get("audience")
+jwks_url: str = auth_settings.get("jwks_url") or ""
+audience: str = auth_settings.get("audience") or ""
 
 # Get the public keys needed to verify JWT tokens
 with urllib.request.urlopen(jwks_url) as url:
@@ -21,7 +25,7 @@ keys: list = jwks["keys"]
 kid_dict = dict((k["kid"], k) for k in keys)
 
 
-def verify_jwt(jwtoken: str) -> tuple[Optional[Exception], Optional[dict]]:
+def verify_jwt(jwtoken: str) -> tuple[Optional[dict], Optional[Exception]]:
     """Verifies a JWT token
 
     :param jwtoken: The token to verify
@@ -36,4 +40,4 @@ def verify_jwt(jwtoken: str) -> tuple[Optional[Exception], Optional[dict]]:
         payload = None
         error = jwt_error
 
-    return error, payload
+    return payload, error

@@ -1,3 +1,6 @@
+"""
+App level config settings
+"""
 import os
 
 from dotenv import load_dotenv
